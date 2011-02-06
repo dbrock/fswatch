@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 
-# Usage: fswatch [-t FILE-EXTENSION] DIRECTORIES...
-# This will print one line to stdout for every change.
-
 require "rubygems"
 require "fssm"
 
@@ -105,6 +102,8 @@ module FSWatch
         case argument = arguments.shift
         when "-t"
           @extension = arguments.shift
+        when "-c"
+          @command = arguments.shift
         when "--"
           @directories.concat(arguments)
           arguments = []
@@ -121,8 +120,9 @@ module FSWatch
     end
 
     def syntax_error!
-      warn "Usage: fswatch [-t FILE-EXTENSION] DIRECTORIES..."
+      warn "Usage: fswatch [-t FILE-EXTENSION] [-c COMMAND] DIRECTORIES..."
       warn "This will print one line to stdout for every change."
+      warn "If COMMAND is given, it will be run after every change."
       exit 1
     end
 
@@ -138,6 +138,7 @@ module FSWatch
 
     def handle_change!
       say "Change detected."
+      system @command if @command
     end
 
     def say(message)
