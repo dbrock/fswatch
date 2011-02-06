@@ -33,6 +33,13 @@ module FSWatch
       @listeners = []
     end
 
+    attr_reader :directories
+    attr_reader :glob
+
+    def path
+      @directories * ":"
+    end
+
     def run!
       until_stopped { watch! }
     end
@@ -123,13 +130,18 @@ module FSWatch
       watcher = Watcher.new \
         :directories => @directories,
         :extension => @extension
+      say "Watching `#{watcher.path}' for `#{watcher.glob}'."
       watcher.on_change { handle_change! }
       Signal.trap("INT") { watcher.stop! }
       watcher.run!
     end
 
     def handle_change!
-      puts "fswatch: [#{timestamp}] Change detected."
+      say "Change detected."
+    end
+
+    def say(message)
+      puts "fswatch: [#{timestamp}] #{message}"
     end
 
     def timestamp
