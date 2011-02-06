@@ -141,7 +141,8 @@ module FSWatch
     end
 
     def say(message)
-      puts "fswatch: [#{timestamp}] #{message}"
+      STDOUT.puts "fswatch: [#{timestamp}] #{message}"
+      STDOUT.flush
     end
 
     def timestamp
